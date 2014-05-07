@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = Optioning::VERSION
   spec.authors       = ["Ricardo Valeriano"]
   spec.email         = ["ricardo.valeriano@gmail.com"]
-  spec.summary       = %q{TODO: Write a short summary. Required.}
-  spec.description   = %q{TODO: Write a longer description. Optional.}
+  spec.summary       = %q{An object oriented way to treat our beloved last parameter: Hash.}
+  spec.description   = %q{An easy way to retrieve, store, filter and deprecate `options` passed to a method. Where `options` are the keys on our beloved `Hash` as last parameter for a method call.}
   spec.homepage      = ""
   spec.license       = "MIT"
 
