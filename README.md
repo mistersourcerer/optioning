@@ -85,13 +85,13 @@ methods:
 
 ```ruby
 @options.raw
-# => [:path, :commit, {to_hash: #<Proc:0x007fa4120bd318@(irb):1 (lambda)>}]
+# => [:path, :commit, {to_hash: #<Proc:0x007fa4120bd318@(irb):42 (lambda)>}]
 
 @options.values
 # => [:path, :commit]
 
 @options.on :to_hash
-# => #<Proc:0x007fa4120bd318@(irb):1 (lambda)>
+# => #<Proc:0x007fa4120bd318@(irb):42 (lambda)>
 ```
 
 ### Deprecating options
@@ -113,9 +113,9 @@ so you can do the following invocation to recover the value passed to the
 deprecated `option`:
 
 ```ruby
-@options.on :to_hash
+@options.on :to
 
-# => #<Proc:0x007fa4120bd318@(irb):1 (lambda)>
+# => #<Proc:0x007fa4120bd318@(irb):42 (lambda)>
 ```
 
 #### Deprecation warnings
@@ -157,19 +157,19 @@ the `#unrecognized_warn` method:
 ```ruby
 def hasherize(*ivars_and_options)
   @options = Optioning.new ivars_and_options
-  @options.recognize :to_hash
+  @options.recognize :from
   @options.unrecognized_warn
 
   # ...
 end
 ```
 
-Now, if a user pass an option different than the `:to_hash` one, a warning will
+Now, if a user pass an option different than the `:from` one, a warning will
 inform that the option is not recognized and will be ignored.
 
 #### Do I Need to register deprecated options as recognized?
 
-Fortunatelly no. You just need to register your deprecations as usual:
+Fortunately no. You just need to register your deprecations as usual:
 
 ```ruby
 def hasherize(*ivars_and_options)
