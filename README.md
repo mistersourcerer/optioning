@@ -85,7 +85,7 @@ methods:
 
 ```ruby
 @options.raw
-# => [:path, :commit, {to_hash: #<Proc:0x007fa4120bd318@(irb):1 (lambda)> }]
+# => [:path, :commit, {to_hash: #<Proc:0x007fa4120bd318@(irb):1 (lambda)>}]
 
 @options.values
 # => [:path, :commit]
