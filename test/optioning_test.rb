@@ -22,5 +22,8 @@ describe Optioning do
   end
 
   describe "#process" do
+    it "returns the instance of `Optioning`" do
+      optioning.process.must_be_same_as optioning
+    end
   end
 end
