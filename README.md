@@ -31,46 +31,6 @@ Or install it yourself as:
 
 ## Usage
 
-### A general example:
-
-```ruby
-# transform.rb
-module Trasnform
-  def transform(*ivars)
-    @options = Optioning.new ivars
-    @options.recognize :times
-    @options.deprecate :using, :call, "v2.0.0"
-    @options.process
-
-    to_call = @options.on :call
-    times = @options.on :times
-
-    #... logic to call `to_call` how many times `times` says so.
-  end
-end
-
-# file.rb
-class File
-  extend Transform
-
-  transform :path, :content, using: ->(string) { string.upcase }, times: 2,
-omg_lol_bbq: "hello world"
-
-  def initialize(path, commit = nil, content = nil)
-    @path, @commit, @content = path, commit, content
-  end
-end
-
-# using_file.rb
-require 'file'
-
- # => Note. ... deprecation warn for using
- # => Note. ... ignoring warn for omg_lol_bbq
-
-```
-
-### A more step by step example
-
 Given the following `File` class:
 
 ```ruby
@@ -81,166 +41,151 @@ class File
 end
 ```
 
-And a class method named `transform` that allows you to indicate some
-transformation to be made against specifics `ivars` before returning than (in my
-imagination it will be made by creating modified `attr_readers`):
+And a module called `Hashing`, which defines a method `.serialize` that allow
+you configure which `ivars` should be used to convert instances of `File` into a
+`Hash` like this:
 
 ```ruby
-class File
-  def self.transform(*ivars)
-    # logic to create the transformed attr_readers here
-  end
+{
+  path: @path,
+  commit: @commit,
+  content: @content
+}
+```
 
-  def initialize(path, commit = nil, content = nil)
-  #...
+And I can configure a transformation in the values of `path`, `commit` and
+`content` when transforming it into a `Hash` like so:
+
+```ruby
+require 'hashing'
+
+class File
+  extend Hashing
+
+  hasherize :path, :commit, to_hash: ->(value) { value.downcase }
 end
 ```
 
-So you can call transform in your class like these:
+As the implementor of this module and the `.hasherize` method, I want to be able
+to use an instance of `Optioning`, so I can store and retrieve the `ivars` and
+the `options` passed to be used along those `ivars`:
 
 ```ruby
-class File
-  def self.transform(*ivars)
-    # logic to create the transformed attr_readers here
+module Hashing
+  def hasherize(*ivars_and_options)
+    @options = Optioning.new ivars_and_options
+
+    # ...
   end
-
-  transform :path, :commit
-
-  def initialize(path, commit = nil, content = nil)
-  #...
 end
 ```
 
-But you want to pass the logic of transformation together with the `ivars` that
-will be transformed:
-
-```ruby
-class File
-  def self.transform(*ivars)
-    # logic to create the transformed attr_readers here
-  end
-
-  transform :path, :commit, using: ->(string_value) { string_value.upcase }
-
-  def initialize(path, commit = nil, content = nil)
-  #...
-end
-```
-
-You can use `Optioning` to capture those parameters and options:
-
-```ruby
-class File
-  def self.transform(*ivars)
-    @options = Optioning.new ivars
-    # logic to create the transformed attr_readers here
-  end
-
-  transform :path, :commit, using: ->(string_value) { string_value.upcase }
-
-  # ...
-end
-```
-
-Now you can use the `Optioning` instance to retrieve the values:
+Now in the `Optioning` instance, I can call the following (among others)
+methods:
 
 ```ruby
 @options.raw
-# => [:path, :commit, {using: #<Proc:0x007fa4120bd318@(irb):1 (lambda)> }]
+# => [:path, :commit, {to_hash: #<Proc:0x007fa4120bd318@(irb):1 (lambda)> }]
 
 @options.values
 # => [:path, :commit]
 
-@options.on :using
+@options.on :to_hash
 # => #<Proc:0x007fa4120bd318@(irb):1 (lambda)>
 ```
 
 ### Deprecating options
 
-Now, following our example, if you want to deprecat the `:using` option in
-favor of the new `:call` option, you could do:
+Now, following our example, if you need to deprecat the `:to_hash` option in
+favor of the new `:to` option, you could do:
 
 ```ruby
-def self.transform(*ivars)
-  @options = Optioning.new ivars
-  @options.deprecate :using, :call, Date.new(2014, 05, 01)
-  # logic to create the transformed attr_readers here
+def hasherize(*ivars_and_options)
+  @options = Optioning.new ivars_and_options
+  @options.deprecate :to_hash, :to, Date.new(2015, 05, 01)
+
+  # ...
 end
 ```
 
-This will replace the deprecated option `:using` for the new one named `:call`
+This will replace the deprecated option `:to_hash` for the new one named `:to`
 so you can do the following invocation to recover the value passed to the
 deprecated `option`:
 
 ```ruby
-@options.on :call
+@options.on :to_hash
 
 # => #<Proc:0x007fa4120bd318@(irb):1 (lambda)>
 ```
 
 #### Deprecation warnings
 
-You can alert your user about those deprecations using the deprecation_warn
+You can alert your user about those deprecations using the `#deprecated_warn`
 method:
 
 ```ruby
-def self.transform(*ivars)
-  @options = Optioning.new ivars
-  @options.deprecate :using, :call
-  @options.drepaction_warn
+def hasherize(*ivars_and_options)
+  @options = Optioning.new ivars_and_options
+  @options.deprecate :to_hash, :to
+  @options.deprecated_warn
 
   # ...
 end
 ```
 
-You can inform the date when the deprecation will not be available anymore
+You can inform the date when the deprecation will not be available anymore.
+These date will be parte of the deprecation message:
 
 ```ruby
-@options.deprecate :using, :call, Date.new(2014, 05, 01)
+@options.deprecate :to_hash, :to, Date.new(2015, 05, 01)
 ```
 
 Or if you prefer, you can specify a version of your software that pretend to
 remove the deprecated thing:
 
 ```ruby
-@options.deprecate :using, :call, "v2.0.0"
+@options.deprecate :to_hash, :to, "v2.0.0"
 ```
 
 ### Ignoring unrecongnized options
 
 If you need, you could fitler the options to mantain just the recognized ones
-available:
+available. To configure the options that matters to your program, use the method
+`#recognize`. And to warn the user in case a unrecognized option is used, call
+the `#unrecognized_warn` method:
 
 ```ruby
-def self.transform(*ivars)
-  @options = Optioning.new ivars
-  @options.recognized :call
+def hasherize(*ivars_and_options)
+  @options = Optioning.new ivars_and_options
+  @options.recognize :to_hash
   @options.unrecognized_warn
 
   # ...
 end
 ```
 
-Now, if a user pass an option different than the `:call` one, a warning will
-tell that the option is not recognized and it will be ignored.
+Now, if a user pass an option different than the `:to_hash` one, a warning will
+inform that the option is not recognized and will be ignored.
 
-#### Need to register deprecated options as recognized?
+#### Do I Need to register deprecated options as recognized?
 
-Fortunatelly no.
-You just need to register your deprecation as usual:
+Fortunatelly no. You just need to register your deprecations as usual:
 
 ```ruby
-def self.transform(*ivars)
-  @options = Optioning.new ivars
-  @options.deprecated :using, :call
+def hasherize(*ivars_and_options)
+  @options = Optioning.new ivars_and_options
+  @options.recognize :from
+  @options.deprecate :to_hash, :to
+  @options.deprecated_warn
+  @options.unrecognized_warn
 
   # ...
 end
 ```
 
-The `#deprecated` method already knows what to do (that is register the `option`
-using as recognized. To sum up in this last example the options `:using` and
-`:call` are already recongnized by the `Optioning` instance.
+The `#deprecate` method already knows what to do (that is register the `option`
+`:to_hash` as recognized. To sum up, in this last example, the options `:from`
+and `:to` are already recongnized by the `Optioning` instance.
 
 ### `#process`
 
@@ -248,15 +193,30 @@ The `#process` method will replace all deprecations, warn about them and warn
 about unrecognized options all at once, so you can use it like this:
 
 ```ruby
-def self.transform(*ivars)
-  @options = Optioning.new ivars
-  @options.deprecate :using, :call
+def hasherize(*ivars_and_options)
+  @options = Optioning.new ivars_and_options
+  @options.recognize :from
+  @options.deprecate :to_hash, :to
   @options.process
 
   # ...
 end
 ```
 
+### Fluent interface
+
+And finally, just for a matter of taste, `#deprecate`, `#recognize` and
+`#process` returns the `Optioning` instance itself, so you can write the last
+example like this (if you want)
+
+```ruby
+def hasherize(*ivars_and_options)
+  @options = Optioning.new(ivars_and_options).recognize(:from)
+  @options.deprecate(:to_hash, :to).process
+
+  # ...
+end
+```
 
 ## Contributing
 
