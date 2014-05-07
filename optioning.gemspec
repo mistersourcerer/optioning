@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["ricardo.valeriano@gmail.com"]
   spec.summary       = %q{An object oriented way to treat our beloved last parameter: Hash.}
   spec.description   = %q{An easy way to retrieve, store, filter and deprecate `options` passed to a method. Where `options` are the keys on our beloved `Hash` as last parameter for a method call.}
-  spec.homepage      = ""
+  spec.homepage      = "http://github.com/ricardovaleriano/optioning"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files`.split($/)
