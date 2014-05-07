@@ -44,4 +44,29 @@ class Optioning
   def on(option)
     @options[option]
   end
+
+  def recognize
+    
+    self
+  end
+
+  def unrecognized_warn
+    
+    self
+  end
+
+  def deprecate
+    
+    self
+  end
+
+  def deprecation_warn
+    
+    self
+  end
+
+  def process
+    
+    self
+  end
 end

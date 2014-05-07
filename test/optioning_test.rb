@@ -20,4 +20,7 @@ describe Optioning do
       optioning.on(:to_hash).object_id.must_be :==, to_hash_lambda.object_id
     end
   end
+
+  describe "#process" do
+  end
 end
