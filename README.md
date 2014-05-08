@@ -147,6 +147,14 @@ remove the deprecated thing:
 @options.deprecate :to_hash, :to, "v2.0.0"
 ```
 
+##### Calling a deprecated option
+
+If you call a deprecated option, the return will be `nil`, and the deprecation
+warning will be exhibited.
+
+ * [ ] maybe we should allow a deprecation strategy? To choose between warning
+   or exception when a deprecated options is called?
+
 ### Ignoring unrecongnized options
 
 If you need, you could fitler the options to mantain just the recognized ones
