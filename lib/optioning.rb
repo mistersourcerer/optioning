@@ -1,15 +1,7 @@
 require "optioning/version"
+require "deprecation"
 
 class Optioning
-  class Deprecation
-    attr_reader :option, :replacement
-
-    def initialize(option, replacement)
-      @option = option
-      @replacement = replacement
-    end
-  end
-
   # Receives a varargs to extract the values (anything before a last parameter
   # `Hash`) and the options (last parameter instance_of `Hash`)
   #
@@ -81,10 +73,17 @@ class Optioning
   end
 
   private
+  # Memoization for the `deprecations` created by invocations of {#deprecate}
+  #
+  # @return [Array] all {Deprecation}s for these {Optioning} instance
   def deprecations
     @deprecations ||= []
   end
 
+  # Cleanup the options trashing up the deprecated options in favor the
+  # replacements.
+  #
+  # @return [Hash] @options already filtered
   def replace_deprecations
     deprecations.each do |deprecation|
       @options[deprecation.replacement] = @options.delete deprecation.option
