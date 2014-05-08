@@ -66,8 +66,7 @@ class Optioning
   end
 
   def deprecate(option, replacement)
-    @deprecations ||= []
-    @deprecations << Deprecation.new(option, replacement)
+    deprecations << Deprecation.new(option, replacement)
     self
   end
 
@@ -82,9 +81,12 @@ class Optioning
   end
 
   private
+  def deprecations
+    @deprecations ||= []
+  end
 
   def replace_deprecations
-    @deprecations.each do |deprecation|
+    deprecations.each do |deprecation|
       @options[deprecation.replacement] = @options.delete deprecation.option
     end
     @options
