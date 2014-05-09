@@ -9,8 +9,8 @@ describe Deprecation do
   end
 
   it "accepts the date of deprecation" do
-    deprecation = Deprecation.new :to_hash, :to, Date.new(2015, 03, 13)
-    deprecation.date.must_be :==, Date.new(2015, 03, 13)
+    deprecation = Deprecation.new :to_hash, :to, 2015, 3
+    deprecation.date.must_be :==, Date.new(2015, 03, 01)
   end
 
   it "accepts a version of deprecation" do
@@ -20,7 +20,28 @@ describe Deprecation do
 
   describe "#warn" do
     let(:deprecation) { Deprecation.new :to_hash, :to, "v2.0.0" }
-    it "returns the message to warn about deprecation"
+    it "returns the message to warn about deprecation" do
+      deprecation.warn.must_be :==, "NOTE: option `:to_hash` is deprecated;"+
+        " use `:to` instead. It will be removed on or after version v2.0.0."
+    end
+
+    it "uses date to deprecate when it is available" do
+      deprecation = Deprecation.new :to_hash, :to, 2015, 3
+      deprecation.warn.must_be :==, "NOTE: option `:to_hash` is deprecated;"+
+        " use `:to` instead. It will be removed on or after 2015-03-01."
+    end
+
+    describe "when caller is available" do
+      before do
+        deprecation.caller = "/x/p/t/o/omg_lol_bbq.rb:42:in `hasherize'"
+      end
+
+      it "deprecation message includes caller info" do
+        deprecation.warn.must_be :==, "NOTE: option `:to_hash` is deprecated;"+
+          " use `:to` instead. It will be removed on or after version v2.0.0.\n"+
+          "Called from /x/p/t/o/omg_lol_bbq.rb:42:in `hasherize'."
+      end
+    end
   end
 
   describe Optioning do
