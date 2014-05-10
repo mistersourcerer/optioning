@@ -15,7 +15,7 @@ class Deprecation
                 "`:#{@replacement}` instead. ",
                 "It will be removed #{when_deprecation_occurs}."]
     message << "\nCalled from #{@caller}." if @caller
-    message.join
+    message.join << "\n"
   end
 
   private

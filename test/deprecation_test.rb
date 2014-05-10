@@ -22,19 +22,19 @@ describe Deprecation do
     it "without version or date" do
       deprecation = Deprecation.new :to_hash, :to
       deprecation.warn.must_be :==, "NOTE: option `:to_hash` is deprecated;"+
-        " use `:to` instead. It will be removed in a future version."
+        " use `:to` instead. It will be removed in a future version.\n"
     end
 
     it "returns the message to warn about deprecation" do
       deprecation = Deprecation.new :to_hash, :to, "v2.0.0"
       deprecation.warn.must_be :==, "NOTE: option `:to_hash` is deprecated;"+
-        " use `:to` instead. It will be removed on or after version v2.0.0."
+        " use `:to` instead. It will be removed on or after version v2.0.0.\n"
     end
 
     it "uses date to deprecate when it is available" do
       deprecation = Deprecation.new :to_hash, :to, 2015, 3
       deprecation.warn.must_be :==, "NOTE: option `:to_hash` is deprecated;"+
-        " use `:to` instead. It will be removed on or after 2015-03-01."
+        " use `:to` instead. It will be removed on or after 2015-03-01.\n"
     end
 
     describe "when caller is available" do
@@ -46,7 +46,7 @@ describe Deprecation do
       it "deprecation message includes caller info" do
         deprecation.warn.must_be :==, "NOTE: option `:to_hash` is deprecated;"+
           " use `:to` instead. It will be removed on or after version v2.0.0.\n"+
-          "Called from /x/p/t/o/omg_lol_bbq.rb:42:in `hasherize'."
+          "Called from /x/p/t/o/omg_lol_bbq.rb:42:in `hasherize'.\n"
       end
     end
   end
@@ -64,7 +64,20 @@ describe Deprecation do
     end
 
     describe "#deprecation_warn" do
+      before do
+        @original_stderr, $stderr = $stderr, StringIO.new
+        optioning.deprecate :to_hash, :to, "v2.0.0"
+      end
 
+      after do
+        $stderr = @original_stderr
+      end
+
+      it "constructs a deprecation message accordingly to the arguments" do
+        optioning.deprecation_warn
+        deprecation = Deprecation.new :to_hash, :to, "v2.0.0"
+        $stderr.string.must_be :==, deprecation.warn
+      end
     end
   end
 end

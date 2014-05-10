@@ -57,13 +57,13 @@ class Optioning
     self
   end
 
-  def deprecate(option, replacement)
-    deprecations << Deprecation.new(option, replacement)
+  def deprecate(option, replacement, version_or_year = nil, month = nil)
+    deprecations << Deprecation.new(option, replacement, version_or_year, month)
     self
   end
 
   def deprecation_warn
-    
+    deprecations.each { |deprecation| $stderr.write deprecation.warn }
     self
   end
 
