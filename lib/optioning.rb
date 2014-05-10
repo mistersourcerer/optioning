@@ -47,11 +47,21 @@ class Optioning
     @options[option]
   end
 
+  # Creates a deprecation for an option, stores info about it's replacement
+  # and time or version to its removal.
+  #
+  # @param option [Symbol] option to be deprecated
+  # @param replacement [Symbol] replacement option
+  # @param version_or_year version when the deprecation will be removed, if
+  # month is filled, this param will be treated as the year of replacement
+  # @param month [Integer] month when the deprecated option will be removed
+  # @returns [Optioning] the current instance of optioning
   def deprecate(option, replacement, version_or_year = nil, month = nil)
     deprecations << Deprecation.new(option, replacement, version_or_year, month)
     self
   end
 
+  # 
   def deprecation_warn(called_from = nil)
     deprecations.each do |deprecation|
       deprecation.caller = called_from.first if called_from
