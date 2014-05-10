@@ -78,6 +78,15 @@ describe Deprecation do
         deprecation = Deprecation.new :to_hash, :to, "v2.0.0"
         $stderr.string.must_be :==, deprecation.warn
       end
+
+      it "uses the callee information to compose the warning message" do
+        optioning.deprecation_warn [
+          "examples/client_maroto.rb:5:in `<class:Client>'",
+          "examples/client_maroto.rb:2:in `<main>'"]
+        deprecation = Deprecation.new :to_hash, :to, "v2.0.0"
+        deprecation.caller = "examples/client_maroto.rb:5:in `<class:Client>'"
+        $stderr.string.must_be :==, deprecation.warn
+      end
     end
   end
 end

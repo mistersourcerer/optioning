@@ -47,6 +47,19 @@ class Optioning
     @options[option]
   end
 
+  def deprecate(option, replacement, version_or_year = nil, month = nil)
+    deprecations << Deprecation.new(option, replacement, version_or_year, month)
+    self
+  end
+
+  def deprecation_warn(called_from = nil)
+    deprecations.each do |deprecation|
+      deprecation.caller = called_from.first if called_from
+    end
+    deprecations.each { |deprecation| $stderr.write deprecation.warn }
+    self
+  end
+
   def recognize
     
     self
@@ -54,16 +67,6 @@ class Optioning
 
   def unrecognized_warn
     
-    self
-  end
-
-  def deprecate(option, replacement, version_or_year = nil, month = nil)
-    deprecations << Deprecation.new(option, replacement, version_or_year, month)
-    self
-  end
-
-  def deprecation_warn
-    deprecations.each { |deprecation| $stderr.write deprecation.warn }
     self
   end
 

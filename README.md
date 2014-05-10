@@ -127,7 +127,7 @@ method:
 def hasherize(*ivars_and_options)
   @options = Optioning.new ivars_and_options
   @options.deprecate :to_hash, :to
-  @options.deprecated_warn
+  @options.deprecation_warn
 
   # ...
 end
@@ -138,7 +138,7 @@ These date will be part of the deprecation message:
 
 ```ruby
 @options.deprecate :to_hash, :to, 2015, 05
-@options.deprecated_warn
+@options.deprecation_warn
 
 # => NOTE: option `:to_hash` is deprecated use `:to` instead. It will be
 #    removed on or after 2015-05-01."
@@ -149,11 +149,14 @@ remove the deprecated thing:
 
 ```ruby
 @options.deprecate :to_hash, :to, "v2.0.0"
-@options.deprecated_warn
+@options.deprecation_warn
 
 # => NOTE: option `:to_hash` is deprecated use `:to` instead. It will be
 #    removed on or after version v2.0.0"
 ```
+
+And finally, you can add information about where te deprecated option was used
+by passing the `caller` to the `deprecation_warn` method.
 
 ##### Caller info
 
@@ -163,8 +166,9 @@ when instantiating the `Optioning`:
 
 ```ruby
 def hasherize(*ivars_and_options)
-  @options = Optioning.new ivars_and_options, caller
+  @options = Optioning.new ivars_and_options
   @options.deprecate :to_hash, :to
+  @options.caller_info = caller
   @options.deprecated_warn
 
   # ...
@@ -233,6 +237,14 @@ def hasherize(*ivars_and_options)
 
   # ...
 end
+```
+
+If you want the deprecation warning messages with the information about where
+the deprecated options were passed, you can pass the `caller` info to the
+`process` method:
+
+```ruby
+@options.process caller
 ```
 
 ### Fluent interface
