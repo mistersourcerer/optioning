@@ -155,6 +155,22 @@ remove the deprecated thing:
 #    removed on or after version v2.0.0"
 ```
 
+##### Caller info
+
+Sometimes you will want to show information about where the call with the
+deprecated option took place. If this is the case, you can pass the caller info
+when instantiating the `Optioning`:
+
+```ruby
+def hasherize(*ivars_and_options)
+  @options = Optioning.new ivars_and_options, caller
+  @options.deprecate :to_hash, :to
+  @options.deprecated_warn
+
+  # ...
+end
+```
+
 ##### Calling a deprecated option
 
 If you call a deprecated option, the return will be `nil`, and the deprecation
