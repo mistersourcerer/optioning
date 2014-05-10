@@ -19,8 +19,14 @@ describe Deprecation do
   end
 
   describe "#warn" do
-    let(:deprecation) { Deprecation.new :to_hash, :to, "v2.0.0" }
+    it "without version or date" do
+      deprecation = Deprecation.new :to_hash, :to
+      deprecation.warn.must_be :==, "NOTE: option `:to_hash` is deprecated;"+
+        " use `:to` instead. It will be removed in a future version."
+    end
+
     it "returns the message to warn about deprecation" do
+      deprecation = Deprecation.new :to_hash, :to, "v2.0.0"
       deprecation.warn.must_be :==, "NOTE: option `:to_hash` is deprecated;"+
         " use `:to` instead. It will be removed on or after version v2.0.0."
     end
@@ -32,6 +38,7 @@ describe Deprecation do
     end
 
     describe "when caller is available" do
+      let(:deprecation) { Deprecation.new :to_hash, :to, "v2.0.0" }
       before do
         deprecation.caller = "/x/p/t/o/omg_lol_bbq.rb:42:in `hasherize'"
       end

@@ -102,7 +102,7 @@ favor of the new `:to` option, you could do:
 ```ruby
 def hasherize(*ivars_and_options)
   @options = Optioning.new ivars_and_options
-  @options.deprecate :to_hash, :to, Date.new(2015, 05, 01)
+  @options.deprecate :to_hash, :to
 
   # ...
 end
@@ -134,10 +134,14 @@ end
 ```
 
 You can inform the date when the deprecation will not be available anymore.
-These date will be parte of the deprecation message:
+These date will be part of the deprecation message:
 
 ```ruby
-@options.deprecate :to_hash, :to, Date.new(2015, 05, 01)
+@options.deprecate :to_hash, :to, 2015, 05
+@options.deprecated_warn
+
+# => NOTE: option `:to_hash` is deprecated use `:to` instead. It will be
+#    removed on or after 2015-05-01."
 ```
 
 Or if you prefer, you can specify a version of your software that pretend to
@@ -145,6 +149,10 @@ remove the deprecated thing:
 
 ```ruby
 @options.deprecate :to_hash, :to, "v2.0.0"
+@options.deprecated_warn
+
+# => NOTE: option `:to_hash` is deprecated use `:to` instead. It will be
+#    removed on or after version v2.0.0"
 ```
 
 ##### Calling a deprecated option

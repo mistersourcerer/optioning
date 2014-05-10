@@ -11,9 +11,9 @@ class Deprecation
   end
 
   def warn
-    after = date ? date.strftime("%Y-%m-%d") : "version #{@version}"
-    message = [ "NOTE: option `:#{@option}` is deprecated; use `:#{@replacement}`",
-      " instead. It will be removed on or after #{after}."]
+    message = [ "NOTE: option `:#{@option}` is deprecated; use ",
+                "`:#{@replacement}` instead. ",
+                "It will be removed #{when_deprecation_occurs}."]
     message << "\nCalled from #{@caller}." if @caller
     message.join
   end
@@ -27,5 +27,14 @@ class Deprecation
       date = Date.new version_or_year, month, 1
     end
     [date, version]
+  end
+
+  def when_deprecation_occurs
+    if @date || @version
+      after = "on or after "
+      after += @date ? @date.strftime("%Y-%m-%d") : "version #{@version}"
+    else
+      "in a future version"
+    end
   end
 end
