@@ -58,6 +58,7 @@ class Optioning
   # @return [Optioning] the current instance of optioning
   def deprecate(option, replacement, version_or_year = nil, month = nil)
     deprecations << Deprecation.new(option, replacement, version_or_year, month)
+    recognize(replacement)
     self
   end
 
@@ -68,8 +69,9 @@ class Optioning
     self
   end
 
-  def recognize(option)
-    recognized << option
+  def recognize(*options)
+    @recognized ||= []
+    @recognized += options
     self
   end
 
@@ -77,8 +79,12 @@ class Optioning
     values = raw.dup
     if values.last.is_a? Hash
       options = values.pop
-      unrecognized = options.keys - recognized
-      unrecognized.each { |unrec| $stderr.write ":#{unrec}" }
+      unrecognized = options.keys - (recognized + deprecations.map { |d| d.option.to_sym })
+      unrecognized.each do |unrec|
+        $stderr.write "NOTE: unrecognized option `:#{unrec}` used.\n"
+      end
+      recognized = @recognized.map { |option| "`:#{option}`" }
+      $stderr.write "You should use only the following: #{recognized.join(", ")}"
     end
     self
   end
