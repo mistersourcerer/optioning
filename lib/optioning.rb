@@ -55,7 +55,7 @@ class Optioning
   # @param version_or_year version when the deprecation will be removed, if
   # month is filled, this param will be treated as the year of replacement
   # @param month [Integer] month when the deprecated option will be removed
-  # @returns [Optioning] the current instance of optioning
+  # @return [Optioning] the current instance of optioning
   def deprecate(option, replacement, version_or_year = nil, month = nil)
     deprecations << Deprecation.new(option, replacement, version_or_year, month)
     self
@@ -63,20 +63,23 @@ class Optioning
 
   # 
   def deprecation_warn(called_from = nil)
-    deprecations.each do |deprecation|
-      deprecation.caller = called_from.first if called_from
-    end
+    set_caller_on_deprecations(called_from)
     deprecations.each { |deprecation| $stderr.write deprecation.warn }
     self
   end
 
-  def recognize
-    
+  def recognize(option)
+    recognized << option
     self
   end
 
   def unrecognized_warn
-    
+    values = raw.dup
+    if values.last.is_a? Hash
+      options = values.pop
+      unrecognized = options.keys - recognized
+      unrecognized.each { |unrec| $stderr.write ":#{unrec}" }
+    end
     self
   end
 
@@ -93,6 +96,10 @@ class Optioning
     @deprecations ||= []
   end
 
+  def recognized
+    @recognized ||= []
+  end
+
   # Cleanup the options trashing up the deprecated options in favor the
   # replacements.
   #
@@ -102,5 +109,10 @@ class Optioning
       @options[deprecation.replacement] = @options.delete deprecation.option
     end
     @options
+  end
+
+  def set_caller_on_deprecations(called_from)
+    return unless called_from && called_from.respond_to?(:first)
+    deprecations.each { |deprecation| deprecation.caller = called_from.first }
   end
 end
