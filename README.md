@@ -168,8 +168,7 @@ when instantiating the `Optioning`:
 def hasherize(*ivars_and_options)
   @options = Optioning.new ivars_and_options
   @options.deprecate :to_hash, :to
-  @options.caller_info = caller
-  @options.deprecated_warn
+  @options.deprecated_warn caller
 
   # ...
 end
