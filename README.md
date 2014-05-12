@@ -55,7 +55,7 @@ And a `class` `Client` extending the `Hashing` and invoking the `.hasherize`
 method like in this example:
 
 ```ruby
-require_relative "./module_maroto"
+require "./hashing"
 class Client
   extend Hashing
 
