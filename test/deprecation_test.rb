@@ -1,6 +1,6 @@
 describe Deprecation do
   let(:to_hash_lambda) { ->(value) { value } }
-  let(:optioning) { Optioning.new :path, :commit, to_hash: to_hash_lambda }
+  let(:optioning) { Optioning.new [:path, :commit, to_hash: to_hash_lambda] }
 
   it "stores the option deprecated and the replacement" do
     deprecation = Deprecation.new :to_hash, :to

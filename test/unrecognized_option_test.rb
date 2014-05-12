@@ -1,6 +1,6 @@
 describe Optioning do
   let(:optioning) {
-    Optioning.new from: "xpto", to: "bbq", no_one_knows: "omg lol"
+    Optioning.new [from: "xpto", to: "bbq", no_one_knows: "omg lol"]
   }
 
   before do
@@ -32,11 +32,11 @@ describe Optioning do
     end
 
     it "not consider deprecated options unrecognized" do
-      optioning = Optioning.new\
+      optioning = Optioning.new [
         from: "xpto",
         to: "bbq",
         omg: "x",
-        no_one_knows: "omg lol"
+        no_one_knows: "omg lol"]
       optioning.deprecate :omg, :lol
       optioning.recognize :from, :to
       optioning.unrecognized_warn
@@ -45,11 +45,11 @@ describe Optioning do
     end
 
     it "not consider replacement options unrecognized" do
-      optioning = Optioning.new\
+      optioning = Optioning.new [
         from: "xpto",
         to: "bbq",
         lol: "x",
-        no_one_knows: "omg lol"
+        no_one_knows: "omg lol"]
       optioning.deprecate :omg, :lol
       optioning.recognize :from, :to
       optioning.unrecognized_warn

@@ -17,7 +17,7 @@ class Optioning
   #
   #   @to = @options.on :to
   #   # => #<Proc:0x8d99c54@(irb):42 (lambda)>
-  def initialize(*args)
+  def initialize(args)
     @args = args
     @values = @args.dup
     @options = @values.pop if @args.last.is_a? Hash

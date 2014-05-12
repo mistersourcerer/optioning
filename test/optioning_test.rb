@@ -1,6 +1,6 @@
 describe Optioning do
   let(:to_hash_lambda) { ->(value) { value } }
-  let(:optioning) { Optioning.new :path, :commit, to_hash: to_hash_lambda }
+  let(:optioning) { Optioning.new [:path, :commit, to_hash: to_hash_lambda] }
 
   before do
     @original_stderr, $stderr = $stderr, StringIO.new
@@ -12,11 +12,11 @@ describe Optioning do
 
   describe "#process" do
     let(:optioning) {
-      Optioning.new :path, :commit,
+      Optioning.new [:path, :commit,
         old: "OH!",
         from: ->(){},
         omg: "O YEAH!",
-        wtf: "?"
+        wtf: "?"]
     }
 
     before do
