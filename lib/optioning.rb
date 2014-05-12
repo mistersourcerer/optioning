@@ -62,7 +62,7 @@ class Optioning
   #   @options = Optioning.new :path, :commit, to_hash: ->(value) { value.upcase }
   #   @options.deprecate :to_hash, :to, Date.new(2015, 05, 01)
   #
-  # @param [Array<Symbol>] all recognized options for the current {Optioning}
+  # @param options [Array<Symbol>] all recognized options for the current {Optioning}
   # @return [Optioning] the current {Optioning} instance
   def recognize(*options)
     @recognized ||= []
@@ -84,7 +84,7 @@ class Optioning
 
   # Issues all unrecognized messages and the recognized_options message to the $stderr
   #
-  # @param [Array<String>] the result of calling {Object#caller}
+  # @param called_from [Array<String>] the result of calling {Object#caller}
   # @return [Optioning] the current {Optioning} instance
   def unrecognized_warn(called_from = nil)
     unrecognized_options.each do |unrecognized|
@@ -97,7 +97,7 @@ class Optioning
   # Issues the deprecation warnings and the unrecognized warnings.
   # Let the current {Optioning} in a `ready to use` state.
   #
-  # @param [Array<String>] the result of calling {Object#caller}
+  # @param called_from [Array<String>] the result of calling {Object#caller}
   # @return [Optioning] the current {Optioning} instance
   def process(called_from = nil)
     deprecation_warn called_from
@@ -158,7 +158,7 @@ class Optioning
 
   # Issues a message containing all the recognized options for an {Optioning}
   #
-  # @param [Array<String>] the result of calling {Object#caller}
+  # @param called_from [Array<String>] the result of calling {Kernel#caller}
   def recognized_options_warn(called_from = nil)
     recognized = @recognized.map { |option| "`:#{option}`" }
     $stderr.write "You should use only the following: #{recognized.join(", ")}"
