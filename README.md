@@ -36,7 +36,7 @@ Or install it yourself as:
 
 Given a `Hashing` module, with a `.hasherize` method like this:
 
-```
+```ruby
 module Hashing
   def hasherize(*values_and_options)
     optioning = Optioning.new values_and_options
