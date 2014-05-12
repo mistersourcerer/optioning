@@ -11,5 +11,10 @@ module Maroto
     optioning.deprecate :to_hash, :to, "v2.0.0"
     optioning.recognize :persist
     optioning.process caller
+
+    puts "\n"
+    puts "*" * 80
+    puts optioning.on :to
+    puts optioning.on :persist
   end
 end

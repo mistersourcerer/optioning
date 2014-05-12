@@ -1,8 +1,8 @@
 # Optioning
 
 An easy way to retrieve, store, filter, transform and deprecate `options` passed
-to a method. Where `options` are the keys our beloved `Hash` as last parameter
-for a method call.
+to a method. Where `options` are the keys in our beloved `Hash` as last parameter
+in a method call.
 
 ## Status
 [![Gem Version](https://badge.fury.io/rb/optioning.svg)](http://badge.fury.io/rb/hashing)
@@ -31,6 +31,54 @@ Or install it yourself as:
 * Support: http://stackoverflow.com/questions/tagged/optioning-ruby
 
 ## Usage
+
+### An "end to end" example
+
+Given a `Hashing` module, with a `.hasherize` method like this:
+
+```
+module Hashing
+  def hasherize(*values_and_options)
+    optioning = Optioning.new values_and_options
+    optioning.deprecate :to_hash, :to, "v2.0.0"
+    optioning.recognize :persist
+    optioning.process caller
+
+    puts "*" * 80
+    puts optioning.on :to
+    puts optioning.on :persist
+  end
+end
+```
+
+And a `class` `Client` extending the `Hashing` and invoking the `.hasherize`
+method like in this example:
+
+```ruby
+require_relative "./module_maroto"
+class Client
+  extend Hashing
+
+  hasherize :some_ivar, to_hash: ->(){}, store: "NO!", persist: "I will persist!"
+end
+```
+
+The following output will be generated:
+
+```
+NOTE: option `:to_hash` is deprecated; use `:to` instead. It will be removed on or after version v2.0.0.
+Called from examples/client_maroto.rb:5:in `<class:Client>'.
+NOTE: unrecognized option `:store` used.
+You should use only the following: `:to`, `:persist`
+Called from examples/client_maroto.rb:5:in `<class:Client>'.
+********************************************************************************
+#<Proc:0x007fd6f42749a8@examples/client_maroto.rb:5 (lambda)>
+I will persist!
+```
+
+The warning messages will be written in the `$stderr`. Done! :smiley:
+
+### A more step by step example
 
 Given the following `File` class:
 
