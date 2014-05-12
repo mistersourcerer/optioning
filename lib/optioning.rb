@@ -126,7 +126,7 @@ class Optioning
   end
 
   def set_caller_on_deprecations(called_from)
-    return unless called_from && called_from.respond_to?(:first)
+    return unless called_from.respond_to?(:first)
     deprecations.each { |deprecation| deprecation.caller = called_from.first }
   end
 end
