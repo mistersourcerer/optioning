@@ -65,8 +65,14 @@ class Optioning
   # 
   def deprecation_warn(called_from = nil)
     set_caller_on_deprecations(called_from)
-    deprecations.each { |deprecation| $stderr.write deprecation.warn }
+    deprecations.select { |deprecation|
+      deprecated_but_used.include? deprecation.option
+    }.each { |deprecation| $stderr.write deprecation.warn }
     self
+  end
+
+  def deprecated_but_used
+    deprecations.map(&:option).select { |option| @options.include? option  }
   end
 
   def recognize(*options)
@@ -89,8 +95,9 @@ class Optioning
     self
   end
 
-  def process
-    
+  def process(called_from = nil)
+    deprecation_warn called_from
+    unrecognized_warn
     self
   end
 

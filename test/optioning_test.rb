@@ -19,14 +19,20 @@ describe Optioning do
       optioning = Optioning.new :path, :commit,
         old: "OH!",
         from: ->(){},
-        wtf: "?",
-        omg: "O YEAH!"
+        omg: "O YEAH!",
+        wtf: "?"
 
       optioning.deprecate :old, :new
       optioning.deprecate :from_hash, :from
       optioning.recognize :omg
 
-      false.must_be :==, true, "testando aqui a interface geral..."
+      optioning.process
+      $stderr.string.must_be :==,[
+        "NOTE: option `:old` is deprecated;",
+        " use `:new` instead. It will be removed in a future version.\n",
+        "NOTE: unrecognized option `:wtf` used.",
+        "\nYou should use only the following: `:new`, `:from`, `:omg`"
+      ].join
     end
   end
 
