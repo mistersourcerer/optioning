@@ -11,27 +11,48 @@ describe Optioning do
   end
 
   describe "#process" do
+    let(:optioning) {
+      Optioning.new :path, :commit,
+        old: "OH!",
+        from: ->(){},
+        omg: "O YEAH!",
+        wtf: "?"
+    }
+
+    before do
+      optioning.deprecate :old, :new
+      optioning.deprecate :from_hash, :from
+      optioning.recognize :omg
+    end
+
     it "returns the instance of `Optioning`" do
       optioning.process.must_be_same_as optioning
     end
 
     it "shows deprecations and unrecognized warnings" do
-      optioning = Optioning.new :path, :commit,
-        old: "OH!",
-        from: ->(){},
-        omg: "O YEAH!",
-        wtf: "?"
-
-      optioning.deprecate :old, :new
-      optioning.deprecate :from_hash, :from
-      optioning.recognize :omg
-
       optioning.process
       $stderr.string.must_be :==,[
         "NOTE: option `:old` is deprecated;",
         " use `:new` instead. It will be removed in a future version.\n",
+
         "NOTE: unrecognized option `:wtf` used.",
         "\nYou should use only the following: `:new`, `:from`, `:omg`"
+      ].join
+    end
+
+    it "accepts the caller info as argument" do
+      optioning.process [
+        "examples/client_maroto.rb:5:in `<class:Client>'",
+        "examples/client_maroto.rb:2:in `<main>'"]
+
+      $stderr.string.must_be :==,[
+        "NOTE: option `:old` is deprecated;",
+        " use `:new` instead. It will be removed in a future version.\n",
+        "Called from examples/client_maroto.rb:5:in `<class:Client>'.\n",
+
+        "NOTE: unrecognized option `:wtf` used.",
+        "\nYou should use only the following: `:new`, `:from`, `:omg`\n",
+        "Called from examples/client_maroto.rb:5:in `<class:Client>'.",
       ].join
     end
   end

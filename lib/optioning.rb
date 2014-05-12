@@ -81,7 +81,7 @@ class Optioning
     self
   end
 
-  def unrecognized_warn
+  def unrecognized_warn(called_from = nil)
     values = raw.dup
     if values.last.is_a? Hash
       options = values.pop
@@ -91,13 +91,14 @@ class Optioning
       end
       recognized = @recognized.map { |option| "`:#{option}`" }
       $stderr.write "You should use only the following: #{recognized.join(", ")}"
+      $stderr.write "\nCalled from #{called_from.first}." if called_from.respond_to? :first
     end
     self
   end
 
   def process(called_from = nil)
     deprecation_warn called_from
-    unrecognized_warn
+    unrecognized_warn called_from
     self
   end
 
