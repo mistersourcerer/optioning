@@ -135,15 +135,19 @@ class Optioning
     @recognized ||= []
   end
 
+  def options
+    @options ||= []
+  end
+
   # Cleanup the options trashing up the deprecated options in favor the
   # replacements.
   #
   # @return [Hash] @options already filtered
   def replace_deprecations
     deprecations.each do |deprecation|
-      @options[deprecation.replacement] = @options.delete deprecation.option
+      options[deprecation.replacement] = options.delete deprecation.option
     end
-    @options
+    options
   end
 
   # All unrecognized options used as parameter to an {Optioning}
@@ -178,6 +182,6 @@ class Optioning
   #
   # @return [Array<Symbol>] deprecated options used in the construction of a {Optioning}
   def deprecated_but_used
-    deprecations.map(&:option).select { |option| @options.include? option  }
+    deprecations.map(&:option).select { |option| options.include? option  }
   end
 end

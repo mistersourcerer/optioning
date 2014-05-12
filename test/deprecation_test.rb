@@ -19,14 +19,8 @@ describe Deprecation do
   end
 
   describe "#warn" do
-    it "without version or date" do
-      deprecation = Deprecation.new :to_hash, :to
-      deprecation.warn.must_be :==, "NOTE: option `:to_hash` is deprecated;"+
-        " use `:to` instead. It will be removed in a future version.\n"
-    end
-
+    let(:deprecation) { Deprecation.new :to_hash, :to, "v2.0.0" }
     it "returns the message to warn about deprecation" do
-      deprecation = Deprecation.new :to_hash, :to, "v2.0.0"
       deprecation.warn.must_be :==, "NOTE: option `:to_hash` is deprecated;"+
         " use `:to` instead. It will be removed on or after version v2.0.0.\n"
     end
@@ -38,7 +32,6 @@ describe Deprecation do
     end
 
     describe "when caller is available" do
-      let(:deprecation) { Deprecation.new :to_hash, :to, "v2.0.0" }
       before do
         deprecation.caller = "/x/p/t/o/omg_lol_bbq.rb:42:in `hasherize'"
       end
@@ -64,29 +57,13 @@ describe Deprecation do
     end
 
     describe "#deprecation_warn" do
-      before do
-        @original_stderr, $stderr = $stderr, StringIO.new
-        optioning.deprecate :to_hash, :to, "v2.0.0"
-      end
-
-      after do
-        $stderr = @original_stderr
-      end
-
-      it "constructs a deprecation message accordingly to the arguments" do
-        optioning.deprecation_warn
-        deprecation = Deprecation.new :to_hash, :to, "v2.0.0"
-        $stderr.string.must_be :==, deprecation.warn
-      end
-
-      it "uses the callee information to compose the warning message" do
-        optioning.deprecation_warn [
-          "examples/client_maroto.rb:5:in `<class:Client>'",
-          "examples/client_maroto.rb:2:in `<main>'"]
-        deprecation = Deprecation.new :to_hash, :to, "v2.0.0"
-        deprecation.caller = "examples/client_maroto.rb:5:in `<class:Client>'"
-        $stderr.string.must_be :==, deprecation.warn
-      end
-    end
+      describe "when there are deprecations configured but no used" do
+        it "doesn't break if last options is not an array" do
+          optioning = Optioning.new [:path, :commit]
+          optioning.deprecate :not_used, :omg
+          optioning.deprecation_warn
+        end
+      end# with deprecations configured
+    end# #deprecation_warn
   end
 end
