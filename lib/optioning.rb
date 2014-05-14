@@ -33,7 +33,7 @@ class Optioning
   # @return value for option passed as parameter
   def on(option)
     replace_deprecations
-    @options[option]
+    options.fetch option, nil
   end
 
   # Creates a deprecation for an option, stores info about it's replacement
@@ -136,7 +136,7 @@ class Optioning
   end
 
   def options
-    @options ||= []
+    @options ||= {}
   end
 
   # Cleanup the options trashing up the deprecated options in favor the

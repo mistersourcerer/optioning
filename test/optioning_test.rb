@@ -74,5 +74,12 @@ describe Optioning do
       # impossible to use lambda.must_be_same_as, maybe a bug?
       optioning.on(:to_hash).object_id.must_be :==, to_hash_lambda.object_id
     end
+
+    describe "when there is no options" do
+      let(:optioning) { Optioning.new [:path, :commit] }
+      it "not breaks when tries to recover the option" do
+        optioning.on :x
+      end
+    end
   end
 end
