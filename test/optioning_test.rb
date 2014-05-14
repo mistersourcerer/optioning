@@ -29,6 +29,15 @@ describe Optioning do
       optioning.process.must_be_same_as optioning
     end
 
+    it "doesn't mutate the original Array" do
+      original = [:path, option: "value"]
+      passed_options = original.dup
+      optioning = Optioning.new passed_options
+      optioning.deprecate :old_option, :option
+      optioning.process
+      passed_options.must_be :==, original
+    end
+
     it "shows deprecations and unrecognized warnings" do
       optioning.process
       $stderr.string.must_be :==,[

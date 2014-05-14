@@ -19,7 +19,7 @@ class Optioning
   def initialize(args)
     @args = args
     @values = @args.dup
-    @options = @values.pop if @args.last.is_a? Hash
+    @options = @values.pop.dup if @args.last.is_a? Hash
   end
 
   # Return the value for a specific option
