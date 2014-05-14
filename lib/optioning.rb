@@ -90,7 +90,7 @@ class Optioning
     unrecognized_options.each do |unrecognized|
       $stderr.write "NOTE: unrecognized option `:#{unrecognized}` used.\n"
     end
-    recognized_options_warn called_from
+    recognized_options_warn(called_from) if unrecognized_options.count > 0
     self
   end
 

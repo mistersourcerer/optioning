@@ -56,5 +56,12 @@ describe Optioning do
       $stderr.string.must_be :==, "NOTE: unrecognized option `:no_one_knows` used."+
         "\nYou should use only the following: `:lol`, `:from`, `:to`"
     end
+
+    it "just send the 'You should use only...' message when there are unrecognized options" do
+      optioning = Optioning.new [omg_lol_bbq: "recognized!"]
+      optioning.recognize :omg_lol_bbq
+      optioning.unrecognized_warn
+      $stderr.string.must_be :==, ""
+    end
   end
 end
