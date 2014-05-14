@@ -38,6 +38,12 @@ describe Optioning do
       passed_options.must_be :==, original
     end
 
+    it "doesn't nillify option when deprecation exists but current is used" do
+      optioning.deprecate :lol, :omg
+      optioning.process
+      optioning.on(:omg).must_be :==, "O YEAH!"
+    end
+
     it "shows deprecations and unrecognized warnings" do
       optioning.process
       $stderr.string.must_be :==,[

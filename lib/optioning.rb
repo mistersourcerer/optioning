@@ -145,7 +145,8 @@ class Optioning
   # @return [Hash] @options already filtered
   def replace_deprecations
     deprecations.each do |deprecation|
-      options[deprecation.replacement] = options.delete deprecation.option
+      deprecated_value = options.delete deprecation.option
+      options[deprecation.replacement] ||= deprecated_value
     end
     options
   end
