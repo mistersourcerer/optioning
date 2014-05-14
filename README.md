@@ -312,6 +312,10 @@ end
 
 ## Contributing
 
+This is a rapid "scratch your own itch" kind of project. It will make me really happy if it can be used used in your software anyhow. If you need something different than what is in it, or can solve us some bugs or add documentation, it will be very well received!
+
+Here is how you can help this gem:
+
 1. Fork it ( http://github.com/ricardovaleriano/optioning/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
