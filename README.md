@@ -34,49 +34,71 @@ Or install it yourself as:
 
 ### An "end to end" example
 
-Given a `Hashing` module, with a `.hasherize` method like this:
+Given the following class:
 
 ```ruby
-module Hashing
-  def hasherize(*values_and_options)
-    optioning = Optioning.new values_and_options
-    optioning.deprecate :to_hash, :to, "v2.0.0"
-    optioning.recognize :persist
-    optioning.process caller
+require 'optioning'
 
-    puts "*" * 80
-    puts optioning.on :to
-    puts optioning.on :persist
+class FileExample
+  def initialize(path, commit, content)
+    @content = content
+    @path, @commit = path, commit
+  end
+
+  def export
+    hasherize :path, :commit,
+      to_hash: ->(){},
+      store: "NO!",
+      persist: "I will persist!"
+  end
+
+  private
+
+  def hasherize(*values_and_options)
+    # ...
   end
 end
 ```
 
-And a `class` `Client` extending the `Hashing` and invoking the `.hasherize`
-method like in this example:
+And the following implementation of the private method `#hasherize`, which uses
+`Optioning` to retrieve the arguments and options passed to it:
 
 ```ruby
-require "./hashing"
-class Client
-  extend Hashing
+optioning = Optioning.new values_and_options
+optioning.deprecate :to_hash, :to, "v2.0.0"
+optioning.recognize :persist
+optioning.process caller
 
-  hasherize :some_ivar, to_hash: ->(){}, store: "NO!", persist: "I will persist!"
-end
+puts "\n#{'*'* 80}"
+puts "I should export the follow ivars: #{optioning.values}"
+puts optioning.on :to
+puts optioning.on :persist
+puts optioning.on :store
 ```
 
-The following output will be generated:
+If you call the `#export` method in an instance of `FileExample` like this:
+
+```ruby
+file = FileExample.new('/some/file.rb', 'cfe9aacbc02528b', '#omg! such file!')
+file.export
+```
+
+The result will be:
 
 ```
 NOTE: option `:to_hash` is deprecated; use `:to` instead. It will be removed on or after version v2.0.0.
-Called from examples/client_maroto.rb:5:in `<class:Client>'.
+Called from examples/file.rb:15:in `export'.
 NOTE: unrecognized option `:store` used.
 You should use only the following: `:to`, `:persist`
-Called from examples/client_maroto.rb:5:in `<class:Client>'.
+Called from examples/file.rb:15:in `export'.
 ********************************************************************************
-#<Proc:0x007fd6f42749a8@examples/client_maroto.rb:5 (lambda)>
+I should export the follow ivars: [:path, :commit]
+#<Proc:0x007fa9658631a0@examples/file.rb:16 (lambda)>
 I will persist!
+NO!
 ```
 
-The warning messages will be written in the `$stderr`. Done! :smiley:
+To play with this example go to the file `examples\file.rb` in this project.
 
 ### A more step by step example
 
@@ -231,11 +253,10 @@ warning will be exhibited.
  * [ ] maybe we should allow a deprecation strategy? To choose between warning
    or exception when a deprecated options is called?
 
-### Ignoring unrecongnized options
+### Unrecongnized options
 
-If you need, you could fitler the options to mantain just the recognized ones
-available. To configure the options that matters to your program, use the method
-`#recognize`. And to warn the user in case a unrecognized option is used, call
+To configure the options that matters to your program, use the method
+`#recognize`. And to warn the user in case an unrecognized option is used, call
 the `#unrecognized_warn` method:
 
 ```ruby
@@ -249,7 +270,7 @@ end
 ```
 
 Now, if a user pass an option different than the `:from` one, a warning will
-inform that the option is not recognized and will be ignored.
+inform that the option is not recognized.
 
 #### Do I Need to register deprecated options as recognized?
 
