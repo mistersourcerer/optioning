@@ -8,7 +8,7 @@ in a method call.
 [![Gem Version](https://badge.fury.io/rb/optioning.svg)](http://badge.fury.io/rb/hashing)
 [![Build Status](https://travis-ci.org/ricardovaleriano/optioning.svg?branch=master)](http://travis-ci.org/ricardovaleriano/hashing?branch=master)
 [![Code Climate](https://codeclimate.com/github/ricardovaleriano/optioning.png)](https://codeclimate.com/github/ricardovaleriano/hashing)
-[![Inline docs](http://inch-pages.github.io/github/ricardovaleriano/optioning.png)](http://inch-pages.github.io/github/ricardovaleriano/optioning)
+[![Inline docs](http://inch-ci.org/github/ricardovaleriano/optioning.png)](http://inch-ci.org/github/ricardovaleriano/optioning)
 
 ## Installation
 
