@@ -10,6 +10,31 @@ describe Optioning do
     $stderr = @original_stderr
   end
 
+  it 'accepts a parameter that is a plain hash' do
+    optioning = Optioning.new old: "OH!",
+                              from: ->(){},
+                              omg: "O YEAH!",
+                              wtf: "?"
+    optioning.deprecate :old, :new
+    optioning.deprecate :from_hash, :from
+    optioning.recognize :omg
+
+    # should not raise
+    optioning.process
+
+    $stderr.string.must_be :==,[
+      "NOTE: option `:old` is deprecated;",
+      " use `:new` instead. It will be removed in a future version.\n",
+
+      "NOTE: unrecognized option `:wtf` used.",
+      "\nYou should use only the following: `:new`, `:from`, `:omg`"
+    ].join
+
+    optioning.on(:omg).must_be :==, "O YEAH!"
+
+    optioning.on(:nah).must_be :==, nil
+  end
+
   describe "#process" do
     let(:optioning) {
       Optioning.new [:path, :commit,

@@ -16,10 +16,24 @@ class Optioning
   #
   #   @to = @options.on :to
   #   # => #<Proc:0x8d99c54@(irb):42 (lambda)>
+  #
+  # @example when the argument is a hash (not an array)
+  #   @options = Optioning.new to_hash: ->(value) { value.upcase }
+  #
+  #   @options.values
+  #   # => []
+  #
+  #   @options.on :to_hash
+  #   # => #<Proc:0x8d99c76@(irb):42 (lambda)>
   def initialize(args)
     @args = args
-    @values = @args.dup
-    @options = @values.pop.dup if @args.last.is_a? Hash
+
+    if args.is_a? Hash
+      @options = args
+    else
+      @values = @args.dup
+      @options = @values.pop.dup if @args.last.is_a? Hash
+    end
   end
 
   # Return the value for a specific option
