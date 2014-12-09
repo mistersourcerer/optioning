@@ -169,10 +169,7 @@ class Optioning
   #
   # @return [Array<Symbol>] unrecognized options
   def unrecognized_options
-    values = raw.dup
-    return [] unless values.last.is_a? Hash
-    options = values.pop
-    options.keys - (recognized + deprecations.map { |d| d.option.to_sym })
+    @options.keys - (recognized + deprecations.map { |d| d.option.to_sym })
   end
 
   # Issues a message containing all the recognized options for an {Optioning}
