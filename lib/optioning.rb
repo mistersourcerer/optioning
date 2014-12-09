@@ -11,10 +11,10 @@ class Optioning
   #   @options = Optioning.new :path, :commit, to_hash: ->(value) { value.upcase }
   #   @options.deprecate :to_hash, :to, Date.new(2015, 05, 01)
   #
-  #   @ivars = @options.values
+  #   @options.values
   #   # => [:path, :commit]
   #
-  #   @to = @options.on :to
+  #   @options.on :to
   #   # => #<Proc:0x8d99c54@(irb):42 (lambda)>
   #
   # @example when the argument is a hash (not an array)
